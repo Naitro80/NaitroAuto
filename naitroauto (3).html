@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaitroAuto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07050f;
+      --panel: #0e0a1a;
+      --border: #1e1035;
+      --purple: #b94fff;
+      --purple-dim: #8a2be2;
+      --purple-mid: #a020f0;
+      --purple-glow: rgba(185,79,255,0.15);
+      --purple-glow-strong: rgba(185,79,255,0.35);
+      --text: #e8d4ff;
+      --muted: #6a4a8a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(185,79,255,0.018) 2px,
+        rgba(185,79,255,0.018) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(185,79,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(185,79,255,0.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-bg {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(120,0,200,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--purple);
+      border: 1px solid var(--purple-dim);
+      padding: 4px 14px;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+      animation: pulse-border 2.5s infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--purple-dim); box-shadow: 0 0 8px var(--purple-glow); }
+      50%       { border-color: var(--purple);     box-shadow: 0 0 18px var(--purple-glow-strong); }
+    }
+
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(52px, 10vw, 100px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, #d070ff 0%, #8a2be2 50%, #c040ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(185,79,255,0.4));
+      animation: flicker 7s infinite;
+    }
+
+    @keyframes flicker {
+      0%,94%,100% { opacity: 1; }
+      95% { opacity: 0.82; }
+      96% { opacity: 1; }
+      97% { opacity: 0.88; }
+    }
+
+    .subtitle {
+      margin-top: 16px;
+      font-size: 12px;
+      letter-spacing: 5px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .cps-display {
+      margin: 52px auto;
+      width: 230px;
+      height: 230px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cps-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+
+    .cps-ring::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: var(--purple);
+      border-right-color: var(--purple-dim);
+      animation: spin 2.8s linear infinite;
+      filter: drop-shadow(0 0 8px var(--purple));
+    }
+
+    .cps-ring::after {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(185,79,255,0.1);
+      border-bottom-color: var(--purple-mid);
+      border-left-color: var(--purple-dim);
+      animation: spin 4.5s linear infinite reverse;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .cps-inner { text-align: center; z-index: 1; }
+
+    .cps-number {
+      font-family: 'Orbitron', monospace;
+      font-size: 54px;
+      font-weight: 900;
+      color: var(--purple);
+      line-height: 1;
+      text-shadow: 0 0 24px var(--purple-glow-strong);
+      display: block;
+    }
+
+    .cps-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .cps-range {
+      font-size: 11px;
+      color: var(--purple-dim);
+      margin-top: 6px;
+      letter-spacing: 2px;
+    }
+
+    .specs {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 28px 36px;
+      margin-bottom: 48px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .specs::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+    }
+
+    .spec-item { text-align: center; }
+
+    .spec-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--purple);
+      display: block;
+      text-shadow: 0 0 10px var(--purple-glow);
+    }
+
+    .spec-key {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .spec-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--border);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 52px;
+    }
+
+    .feature-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--purple), var(--purple-dim));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(185,79,255,0.06), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(185,79,255,0.4);
+      transform: translateY(-3px);
+    }
+
+    .feature-card:hover::before,
+    .feature-card:hover::after { opacity: 1; }
+
+    .feature-icon { font-size: 22px; margin-bottom: 14px; display: block; }
+
+    .feature-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .download-wrap {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .download-btn {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #9b20e8, #b94fff);
+      padding: 18px 56px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.2s;
+      clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+      box-shadow:
+        0 0 30px rgba(185,79,255,0.4),
+        0 0 80px rgba(185,79,255,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.45s;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 0 50px rgba(185,79,255,0.6),
+        0 10px 40px rgba(185,79,255,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .download-btn:hover::before { transform: translateX(100%); }
+    .download-btn:active { transform: translateY(-1px); }
+
+    .download-note {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .footer {
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 2px;
+    }
+
+    .footer span { color: var(--purple); }
+
+    .corner-tl, .corner-br {
+      position: fixed;
+      width: 55px; height: 55px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .corner-tl { top: 18px; left: 18px; border-top: 1px solid var(--purple-dim); border-left: 1px solid var(--purple-dim); opacity: 0.5; }
+    .corner-br { bottom: 18px; right: 18px; border-bottom: 1px solid var(--purple-dim); border-right: 1px solid var(--purple-dim); opacity: 0.5; }
+
+    .burst {
+      position: fixed;
+      border-radius: 50%;
+      background: var(--purple);
+      pointer-events: none;
+      animation: burst-out 0.45s forwards;
+      transform: translate(-50%,-50%);
+      z-index: 998;
+    }
+    @keyframes burst-out {
+      0%   { width: 6px;  height: 6px;  opacity: 0.9; box-shadow: 0 0 8px var(--purple); }
+      100% { width: 44px; height: 44px; opacity: 0;   box-shadow: 0 0 24px var(--purple); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+<div class="corner-tl"></div>
+<div class="corner-br"></div>
+
+<div class="container">
+
+  <header class="header">
+    <div class="badge">v1.0 — Windows</div>
+    <h1>NaitroAuto</h1>
+    <p class="subtitle">Precision Click Automation Tool</p>
+  </header>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="cps-display">
+      <div class="cps-ring"></div>
+      <div class="cps-inner">
+        <span class="cps-number" id="cpsCounter">1</span>
+        <span class="cps-label">Max CPS</span>
+        <div class="cps-range">1 — 50 CPS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="specs">
+    <div class="spec-item">
+      <span class="spec-value">1–50</span>
+      <div class="spec-key">Clicks / Second</div>
+    </div>
+    <div class="spec-divider"></div>
+    <div class="spec-item">
+      <span class="spec-value">Custom</span>
+      <div class="spec-key">Hotkeys</div>
+    </div>
+    <div class="spec-divider"></div>
+    <div class="spec-item">
+      <span class="spec-value">LMB / RMB</span>
+      <div class="spec-key">Mouse Buttons</div>
+    </div>
+    <div class="spec-divider"></div>
+    <div class="spec-item">
+      <span class="spec-value">Free</span>
+      <div class="spec-key">License</div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <span class="feature-icon">⌨</span>
+      <div class="feature-title">Custom Hotkeys</div>
+      <p class="feature-desc">Bind any key to start and stop NaitroAuto. Fully rebindable to whatever fits your setup — no defaults forced on you.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">1 to 50 CPS</div>
+      <p class="feature-desc">Fine-tune your clicks per second from a calm 1 CPS up to a blazing 50 CPS. Dial in exactly what you need for any game or task.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🖱</span>
+      <div class="feature-title">Left & Right Click</div>
+      <p class="feature-desc">Supports both left and right mouse button automation. Switch between them instantly from the clean minimal interface.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌙</span>
+      <div class="feature-title">Lightweight & Fast</div>
+      <p class="feature-desc">Tiny executable with zero bloat. Launches instantly, runs silently in the background with near-zero CPU usage.</p>
+    </div>
+  </div>
+
+  <div class="download-wrap">
+    <a href="https://drive.google.com/uc?export=download&id=1sOwKkNZ70vA-cm0oF9ohm0p5RJG5wzL7" target="_blank" class="download-btn">
+      ↓ &nbsp; Download NaitroAuto
+    </a>
+    <p class="download-note">NaitroAuto.zip &nbsp;·&nbsp; Windows 10/11 &nbsp;·&nbsp; No install required</p>
+  </div>
+
+  <footer class="footer">
+    <p>NAITROAUTO &nbsp;·&nbsp; <span>v1.0</span> &nbsp;·&nbsp; Built for the night</p>
+  </footer>
+
+</div>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const b = document.createElement('div');
+    b.className = 'burst';
+    b.style.left = e.clientX + 'px';
+    b.style.top  = e.clientY + 'px';
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 450);
+  });
+
+  const counter = document.getElementById('cpsCounter');
+  let val = 1;
+  const anim = setInterval(() => {
+    val++;
+    counter.textContent = val;
+    if (val >= 50) clearInterval(anim);
+  }, 28);
+</script>
+</body>
+</html>
